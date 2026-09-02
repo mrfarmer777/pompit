@@ -77,3 +77,15 @@ Shoulda::Matchers.configure do |config|
     with.library :rails
   end
 end
+
+RSpec.configure do |config|
+  # Use fast rack_test for non-JS system tests by default
+  config.before(:each, type: :system) do
+    driven_by :rack_test
+  end
+
+  # Switch to headless Chrome only when js: true is passed
+  config.before(:each, type: :system, js: true) do
+    driven_by :selenium, using: :headless_chrome, screen_size: [1400, 1400]
+  end
+end
