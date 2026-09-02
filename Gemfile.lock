@@ -341,6 +341,9 @@ GEM
     securerandom (0.4.1)
     shoulda-matchers (6.5.0)
       activesupport (>= 5.2.0)
+    simple_form (5.4.1)
+      actionpack (>= 7.0)
+      activemodel (>= 7.0)
     slim (5.2.1)
       temple (~> 0.10.0)
       tilt (>= 2.1.0)
@@ -434,6 +437,7 @@ DEPENDENCIES
   rspec-rails
   rubocop-rails-omakase
   shoulda-matchers
+  simple_form
   slim-rails
   solid_cable
   solid_cache
