@@ -19,6 +19,18 @@ RSpec.describe 'Exercise Pages', type: :system do
 
       expect(page).to have_link('Add Exercise', href: new_exercise_path)
     end
+
+    it 'allows exercises to be deleted' do
+      visit page_path
+
+      exercise_row = find('.exercise-row', match: :first)
+      within(exercise_row) do
+        click_on 'Delete Exercise'
+      end
+
+      expect(page).to have_content('Exercise deleted!')
+      expect{ pull_up.reload }.to raise_error(ActiveRecord::RecordNotFound)
+    end
   end
 
   context 'creation flow' do
@@ -41,6 +53,52 @@ RSpec.describe 'Exercise Pages', type: :system do
 
       expect(page).to have_content("can't be blank")
       expect(Exercise.count).to eq(0)
+    end
+  end
+
+  context 'update flow' do
+    let(:exercise) { create :exercise, name: 'Push Up' }
+    let(:page_path) { edit_exercise_path(exercise) }
+
+    it 'allows the user to update an exercise' do
+      visit page_path
+      fill_in 'Name', with: 'Squat'
+
+      click_button 'Update Exercise'
+
+      expect(page).to have_content('Exercise successfully updated!')
+      expect(page).to have_link('Squat', href: exercise_path(exercise)), 'Should redirect to index page after update'
+      expect(Exercise.last.name).to eq('Squat')
+    end
+
+    it 'displays validation errors if the exercise cannot be updated' do
+      visit page_path
+
+      fill_in 'Name', with: ''
+      click_button 'Update Exercise'
+
+      expect(page).to have_content("can't be blank")
+      expect(Exercise.last.name).to eq('Push Up')
+    end
+  end
+
+  context 'show' do
+    let(:exercise) { create :exercise, name: 'Pull Up' }
+    let(:page_path) { exercise_path(exercise) }
+
+    it 'displays the exercise details' do
+      visit page_path
+
+      expect(page).to have_content("Pull Up (#{exercise.id})")
+    end
+
+    it 'allows exercises to be deleted' do
+      visit page_path
+
+      click_on 'Delete'
+
+      expect(page).to have_content('Exercise deleted!')
+      expect{ exercise.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 end

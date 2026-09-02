@@ -7,7 +7,7 @@ class ExercisesController < ApplicationController
     @exercise = Exercise.new(**exercise_params)
     if @exercise.save
       flash[:success] = 'Exercise successfully created!'
-      redirect_to exercises_path
+      redirect_to exercises_path, status: :see_other
     else
       render :new, status: :unprocessable_entity
     end
@@ -17,11 +17,31 @@ class ExercisesController < ApplicationController
     @exercises = Exercise.all
   end
 
-  def delete
+  def destroy
+    @exercise = Exercise.find(params[:id])
+    if @exercise.destroy
+      flash[:success] = 'Exercise deleted!'
+      redirect_to exercises_path, status: :see_other
+    end
   end
 
   def show
     @exercise = Exercise.find(params[:id])
+  end
+
+  def edit
+    @exercise = Exercise.find(params[:id])
+  end
+
+  def update
+    @exercise = Exercise.find(params[:id])
+    if @exercise.update(exercise_params)
+      flash[:success] = 'Exercise successfully updated!'
+      redirect_to exercises_path
+    else
+      render :edit, status: :unprocessable_entity
+    end
+
   end
 
   private

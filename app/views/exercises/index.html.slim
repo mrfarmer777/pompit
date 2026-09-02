@@ -5,8 +5,9 @@ div.flash-container
       = message
 ul
   - @exercises.each do |exercise|
-    li
+    li.exercise-row
       = link_to exercise.name, exercise_path(exercise)
+      = button_to 'Delete Exercise', exercise_path(exercise),  { method: :delete }
 
 div
     = link_to 'Add Exercise', new_exercise_path
