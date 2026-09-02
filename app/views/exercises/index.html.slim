@@ -1,0 +1,12 @@
+h1 Exercises#index
+div.flash-container
+  - flash.each do |message|
+    .flash-message
+      = message
+ul
+  - @exercises.each do |exercise|
+    li
+      = link_to exercise.name, exercise_path(exercise)
+
+div
+    = link_to 'Add Exercise', new_exercise_path
