@@ -1,12 +1,13 @@
 h1 Exercises#index
 div.flash-container
-  - flash.each do |message|
+  - flash.each do |_type, message|
     .flash-message
       = message
 ul
   - @exercises.each do |exercise|
     li.exercise-row
       = link_to exercise.name, exercise_path(exercise)
+      = link_to 'Edit', edit_exercise_path(exercise, from: 'index')
       = button_to 'Delete Exercise', exercise_path(exercise),  { method: :delete }
 
 div

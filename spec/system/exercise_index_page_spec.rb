@@ -20,6 +20,31 @@ RSpec.describe 'Exercise Pages', type: :system do
       expect(page).to have_link('Add Exercise', href: new_exercise_path)
     end
 
+    it 'includes a button to delete existing exercises' do
+      visit page_path
+
+      rows = all('.exercise-row')
+      expect(rows.length).to eq(2)
+      rows.each do |row|
+        within(row) do
+          expect(page).to have_button('Delete Exercise')
+        end
+      end
+    end
+
+    it 'includes a link to edit existing exercises' do
+      visit page_path
+
+      rows = all('.exercise-row')
+      expect(rows.length).to eq(2)
+
+      rows.each do |row|
+        within(row) do
+          expect(page).to have_link('Edit')
+        end
+      end
+    end
+
     it 'allows exercises to be deleted' do
       visit page_path
 
@@ -33,7 +58,7 @@ RSpec.describe 'Exercise Pages', type: :system do
     end
   end
 
-  context 'creation flow' do
+  context 'create' do
     let(:page_path) { new_exercise_path }
 
     it 'allows the user to add a new exercise' do
@@ -56,18 +81,18 @@ RSpec.describe 'Exercise Pages', type: :system do
     end
   end
 
-  context 'update flow' do
+  context 'edit' do
     let(:exercise) { create :exercise, name: 'Push Up' }
-    let(:page_path) { edit_exercise_path(exercise) }
+    let(:page_path) { edit_exercise_path(exercise, from: :show) }
 
     it 'allows the user to update an exercise' do
       visit page_path
-      fill_in 'Name', with: 'Squat'
 
+      fill_in 'Name', with: 'Squat'
       click_button 'Update Exercise'
 
       expect(page).to have_content('Exercise successfully updated!')
-      expect(page).to have_link('Squat', href: exercise_path(exercise)), 'Should redirect to index page after update'
+      expect(current_path).to eq(exercise_path(exercise)), 'Should redirect to index page after update'
       expect(Exercise.last.name).to eq('Squat')
     end
 
@@ -99,6 +124,19 @@ RSpec.describe 'Exercise Pages', type: :system do
 
       expect(page).to have_content('Exercise deleted!')
       expect{ exercise.reload }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it 'allows exercises to be edited' do
+      visit page_path
+
+      click_on 'Edit'
+      fill_in 'Name', with: 'Squat'
+
+      click_on 'Update Exercise'
+
+      expect(page).to have_content('Exercise successfully updated!')
+      expect(exercise.reload.name).to eq('Squat')
+      expect(current_path).to eq(exercise_path(exercise))
     end
   end
 end

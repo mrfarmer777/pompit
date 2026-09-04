@@ -1,4 +1,4 @@
-h1 Create New Exercise
-= simple_form_for @exercise do |f|
+h1 Update Exercise
+= simple_form_for @exercise, url: exercise_path(@exercise, from: @from) do |f|
   = f.input :name
-  = f.button :submit
+  = f.button :submit, 'Update Exercise'

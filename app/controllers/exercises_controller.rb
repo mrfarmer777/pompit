@@ -31,13 +31,16 @@ class ExercisesController < ApplicationController
 
   def edit
     @exercise = Exercise.find(params[:id])
+    @from = params[:from]
   end
 
   def update
     @exercise = Exercise.find(params[:id])
     if @exercise.update(exercise_params)
       flash[:success] = 'Exercise successfully updated!'
-      redirect_to exercises_path
+      params[:from] == 'show' ?
+        redirect_to(exercise_path(@exercise), status: :see_other) :
+        redirect_to(exercises_path, status: :see_other)
     else
       render :edit, status: :unprocessable_entity
     end

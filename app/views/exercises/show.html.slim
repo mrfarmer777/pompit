@@ -1,4 +1,10 @@
 h1 = "#{@exercise.name} (#{@exercise.id})"
 p This is the show page!
-= link_to 'Back', exercises_path
+.flash-container
+  - flash.each do |_type, message|
+    .flash-message
+      = message
+
+= link_to 'Edit', edit_exercise_path(@exercise, from: 'show')
 = button_to 'Delete', exercise_path(@exercise), { method: :delete }
+= link_to 'Back', exercises_path
