@@ -1,0 +1,4 @@
+h1 Update Workout
+= simple_form_for @workout, url: workout_path(@workout, from: @from) do |f|
+  = f.input :name
+  = f.button :submit, 'Update Workout'

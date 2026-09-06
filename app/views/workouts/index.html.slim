@@ -1,0 +1,14 @@
+h1 Workouts#index
+div.flash-container
+  - flash.each do |_type, message|
+    .flash-message
+      = message
+ul
+  - @workouts.each do |workout|
+    li.workout-row
+      = link_to workout.name, workout_path(workout)
+      = link_to 'Edit', edit_workout_path(workout, from: 'index')
+      = button_to 'Delete Workout', workout_path(workout),  { method: :delete }
+
+div
+    = link_to 'Create Workout', new_workout_path
