@@ -28,6 +28,9 @@
 !/tmp/storage/
 !/tmp/storage/.keep
 
+# Ignore JS packages
+/vendor/javascript
+
 /public/assets
 
 # Ignore key files for decrypting credentials and more.
