@@ -71,6 +71,68 @@ RSpec.describe 'Workout Pages', type: :system do
       expect(Workout.last.name).to eq('Chest and Tricep')
     end
 
+    it 'handles invalid exercise workout params then creates successfully once corrected', :js do
+      create :exercise, name: 'Standing Upright Row'
+      visit page_path
+
+      fill_in 'Name', with: 'Back and Bicep'
+      click_on 'Add Exercise'
+
+      # when adding an exercise with invalid set count
+      find("select[name^='workout[workout_exercises_attributes]['").select('Standing Upright Row')
+      fill_in 'Set count', with: 0
+
+      click_button 'Create Workout'
+
+      # then
+      expect(page).to have_content('must be greater than 0')
+      exercise_input = find("select[name^='workout[workout_exercises_attributes]['")
+      expect(exercise_input.find('option[selected]').text).to eq('Standing Upright Row'), 'Standing Upright Row should be selected'
+
+      # when correcting the set count validation error
+      fill_in 'Set count', with: 3
+      click_button 'Create Workout'
+
+      # then
+      expect(page).to have_content('Workout successfully created!')
+      workout = Workout.last
+      expect(workout.name).to eq('Back and Bicep')
+      expect(workout.workout_exercises.size).to eq(1)
+      expect(workout.workout_exercises.first.exercise.name).to eq('Standing Upright Row')
+      expect(workout.workout_exercises.first.set_count).to eq(3)
+    end
+
+    it 'can add multiple exercises to a new workout', :js do
+      create :exercise, name: 'Standing Upright Row'
+      create :exercise, name: 'Romanian Deadlifts'
+      visit page_path
+
+      fill_in 'Name', with: 'Back and Bicep'
+      click_on 'Add Exercise'
+
+      # when adding an exercise with invalid set count
+      find("select[name^='workout[workout_exercises_attributes]['").select('Standing Upright Row')
+      fill_in 'Set count', with: 1
+
+      click_on 'Add Exercise'
+
+      expect(page).to have_css('.workout-exercise-fields', count: 2)
+
+      exercise_fields = all('.workout-exercise-fields')
+      within(exercise_fields.last) do
+        find("select[name^='workout[workout_exercises_attributes]['").select('Romanian Deadlifts')
+        fill_in 'Set count', with: 1
+      end
+
+      page.save_screenshot('screenshot.png')
+      click_button 'Create Workout'
+
+      expect(page).to have_content('Workout successfully created!')
+      workout = Workout.last
+      expect(workout.workout_exercises.size).to eq(2)
+      expect(workout.exercises.map(&:name)).to eq(['Standing Upright Row', 'Romanian Deadlifts'])
+    end
+
     it 'displays validation errors if the workout cannot be saved' do
       visit page_path
 

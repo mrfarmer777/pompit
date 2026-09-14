@@ -1,4 +1,13 @@
 h1 Create New Workout
 = simple_form_for @workout do |f|
   = f.input :name
+  div data-controller='nested-form'
+    template data-nested-form-target='template'
+      = f.fields_for :workout_exercises, WorkoutExercise.new, child_index: 'NEW_RECORD' do |we_form|
+        = render 'workout_exercise_fields', f: we_form, exercises: @exercises
+    div data-nested-form-target='target'
+      = f.fields_for :workout_exercises do |we_form|
+        = render 'workout_exercise_fields', f: we_form, exercises: @exercises
+    button type='button' data-action="nested-form#add"
+      | Add Exercise
   = f.button :submit

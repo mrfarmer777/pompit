@@ -1,0 +1,9 @@
+.workout-exercise-fields
+  - index = f.index.is_a?(Integer) ? f.index : Time.now.to_i
+  = f.hidden_field :_destroy, data: { role: 'destroy-flag' }
+  .field
+    = f.label 'Exercise', for: :exercise_id
+    = f.collection_select :exercise_id, exercises, :id, :name, { prompt: 'Choose a Exercise', label: 'Exercise' }
+    = f.input :set_count, errors: f.object.errors[:set_count]
+    button type="button" onclick="this.closest('.workout-exercise-fields').style.display='none'; this.closest('.workout-exercise-fields').querySelector('[data-role=\'destroy-flag\']').value='1'"
+      | Remove
