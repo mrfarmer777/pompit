@@ -22,6 +22,7 @@ class WorkoutsController < ApplicationController
   def edit
     @workout = Workout.find(params[:id])
     @from = params[:from]
+    @exercises = Exercise.all
   end
 
   def update
@@ -51,6 +52,6 @@ class WorkoutsController < ApplicationController
   private
 
   def workout_params
-    params.require(:workout).permit(:name, workout_exercises_attributes: [:id, :exercise_id, :set_count])
+    params.require(:workout).permit(:name, workout_exercises_attributes: [:id, :exercise_id, :set_count, :_destroy])
   end
 end

@@ -167,6 +167,40 @@ RSpec.describe 'Workout Pages', type: :system do
       expect(page).to have_content("can't be blank")
       expect(Workout.last.name).to eq('Back and Bicep')
     end
+
+    it 'allows the user to add and remove exercises to a workout', :js do
+      create :exercise, name: 'Standing Upright Row'
+      create :exercise, name: 'Romanian Deadlifts'
+      visit page_path
+
+      click_on 'Add Exercise'
+      exercise_fields = all('.workout-exercise-fields')
+      within(exercise_fields.last) do
+        find("select[name^='workout[workout_exercises_attributes]['").select('Romanian Deadlifts')
+        fill_in 'Set count', with: 1
+      end
+
+      click_on 'Update Workout'
+      expect(page).to have_content('Workout successfully updated!')
+      expect(Workout.last.exercises.size).to eq(1)
+
+      visit page_path
+
+      click_on 'Remove'
+
+      click_on 'Add Exercise'
+      exercise_fields = all('.workout-exercise-fields')
+      within(exercise_fields.last) do
+        find("select[name^='workout[workout_exercises_attributes]['").select('Standing Upright Row')
+        fill_in 'Set count', with: 1
+      end
+
+      click_on 'Update Workout'
+      expect(page).to have_content('Workout successfully updated!')
+      expect(Workout.last.exercises.size).to eq(1)
+      expect(Workout.last.exercises.first.name).to eq('Standing Upright Row')
+
+    end
   end
 
   context 'show' do
