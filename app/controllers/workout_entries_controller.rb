@@ -10,6 +10,9 @@ class WorkoutEntriesController < ApplicationController
     if @workout_entry.save
       flash[:success] = "Workout entry created!"
       redirect_to workout_entry_path(@workout_entry), status: :see_other
+    else
+      @workouts = Workout.all
+      render :new, status: :unprocessable_entity
     end
 
   end

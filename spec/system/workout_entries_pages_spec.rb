@@ -74,6 +74,15 @@ RSpec.describe 'Workout Entries Pages', type: :system do
       expect(WorkoutEntry.last.workout).to eq(workout)
       expect(WorkoutEntry.last.date).to eq(Date.current)
     end
+
+    it 'displays validation errors for a missing date' do
+      visit page_path
+
+      select 'Push Workout 1', from: 'workout_entry[workout_id]'
+      click_on 'Save Entry'
+
+      expect(page).to have_content("can't be blank") # missing date
+    end
   end
 
   # context 'edit' do
