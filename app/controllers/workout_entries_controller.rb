@@ -14,7 +14,22 @@ class WorkoutEntriesController < ApplicationController
       @workouts = Workout.all
       render :new, status: :unprocessable_entity
     end
+  end
 
+  def edit
+    @workout_entry = WorkoutEntry.find(params[:id])
+    @workouts = Workout.all
+  end
+
+  def update
+    @workout_entry = WorkoutEntry.find(params[:id])
+    if @workout_entry.update(workout_entry_params)
+      flash[:success] = "Workout Entry successfully updated!"
+      redirect_to workout_entry_path(@workout_entry), status: :see_other
+    else
+      @workouts = Workout.all
+      render :edit, status: :unprocessable_entity
+    end
   end
 
   def show

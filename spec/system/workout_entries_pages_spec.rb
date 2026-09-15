@@ -85,31 +85,30 @@ RSpec.describe 'Workout Entries Pages', type: :system do
     end
   end
 
-  # context 'edit' do
-  #   let(:exercise) { create :exercise, name: 'Push Up' }
-  #   let(:page_path) { edit_exercise_path(exercise, from: :show) }
-  #
-  #   it 'allows the user to update an exercise' do
-  #     visit page_path
-  #
-  #     fill_in 'Name', with: 'Squat'
-  #     click_button 'Update Exercise'
-  #
-  #     expect(page).to have_content('Exercise successfully updated!')
-  #     expect(current_path).to eq(exercise_path(exercise)), 'Should redirect to index page after update'
-  #     expect(Exercise.last.name).to eq('Squat')
-  #   end
-  #
-  #   it 'displays validation errors if the exercise cannot be updated' do
-  #     visit page_path
-  #
-  #     fill_in 'Name', with: ''
-  #     click_button 'Update Exercise'
-  #
-  #     expect(page).to have_content("can't be blank")
-  #     expect(Exercise.last.name).to eq('Push Up')
-  #   end
-  # end
+  context 'edit' do
+    let(:workout_entry) { create :workout_entry }
+    let(:page_path) { edit_workout_entry_path(workout_entry, from: :show) }
+
+    it 'allows the user to update a workout entry' do
+      visit page_path
+
+      fill_in 'Date', with: Date.current - 3.days
+      click_button 'Update Entry'
+
+      expect(page).to have_content('Workout Entry successfully updated!')
+      expect(current_path).to eq(workout_entry_path(workout_entry)), 'Should redirect to show page after update'
+      expect(WorkoutEntry.last.date).to eq(Date.current - 3.days)
+    end
+
+    it 'displays validation errors' do
+      visit page_path
+
+      fill_in 'Date', with: ''
+      click_button 'Update Entry'
+
+      expect(page).to have_content("can't be blank")
+    end
+  end
 
   context 'show' do
     let(:workout_entry) { create(:workout_entry) }
