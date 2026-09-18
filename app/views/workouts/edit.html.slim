@@ -1,5 +1,5 @@
 h1 Update Workout
-= simple_form_for @workout do |f|
+= simple_form_for @workout, url: workout_path(@workout, from: @from) do |f|
   = f.input :name
   div data-controller='nested-form'
     template data-nested-form-target='template'

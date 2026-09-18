@@ -154,7 +154,7 @@ RSpec.describe 'Workout Pages', type: :system do
       click_button 'Update Workout'
 
       expect(page).to have_content('Workout successfully updated!')
-      expect(current_path).to eq(workout_path(workout)), 'Should redirect to index page after update'
+      expect(current_path).to eq(workout_path(workout)), 'Should redirect to show page after update'
       expect(Workout.last.name).to eq('Chest and Tricep')
     end
 

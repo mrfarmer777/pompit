@@ -33,6 +33,7 @@ class WorkoutsController < ApplicationController
         redirect_to(workout_path(@workout), status: :see_other) :
         redirect_to(workouts_path, status: :see_other)
     else
+      @exercises = Exercise.all
       render :edit, status: :unprocessable_entity
     end
   end
