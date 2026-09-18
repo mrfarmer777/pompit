@@ -10,9 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_15_224723) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_18_003449) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "exercise_entries", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "reps"
+    t.integer "set_number"
+    t.datetime "updated_at", null: false
+    t.decimal "weight"
+    t.bigint "workout_entry_id", null: false
+    t.bigint "workout_exercise_id", null: false
+    t.index ["workout_entry_id"], name: "index_exercise_entries_on_workout_entry_id"
+    t.index ["workout_exercise_id"], name: "index_exercise_entries_on_workout_exercise_id"
+  end
 
   create_table "exercises", force: :cascade do |t|
     t.datetime "created_at", null: false
