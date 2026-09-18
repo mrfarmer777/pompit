@@ -2,61 +2,45 @@ require 'rails_helper'
 
 RSpec.describe 'Workout Entries Pages', type: :system do
 
-  # context 'index' do
-  #   let(:page_path) { exercises_path }
-  #   let!(:pull_up) { create :exercise, name: 'Pull Up' }
-  #   let!(:push_up) { create :exercise, name: 'Push Up' }
-  #
-  #   it 'displays a list of links to exercise show pages' do
-  #     visit page_path
-  #
-  #     expect(page).to have_link('Pull Up', href: exercise_path(pull_up))
-  #     expect(page).to have_link('Push Up', href: exercise_path(push_up))
-  #   end
-  #
-  #   it 'includes a link to add a new exercise' do
-  #     visit page_path
-  #
-  #     expect(page).to have_link('Add Exercise', href: new_exercise_path)
-  #   end
-  #
-  #   it 'includes a button to delete existing exercises' do
-  #     visit page_path
-  #
-  #     rows = all('.exercise-row')
-  #     expect(rows.length).to eq(2)
-  #     rows.each do |row|
-  #       within(row) do
-  #         expect(page).to have_button('Delete Exercise')
-  #       end
-  #     end
-  #   end
-  #
-  #   it 'includes a link to edit existing exercises' do
-  #     visit page_path
-  #
-  #     rows = all('.exercise-row')
-  #     expect(rows.length).to eq(2)
-  #
-  #     rows.each do |row|
-  #       within(row) do
-  #         expect(page).to have_link('Edit')
-  #       end
-  #     end
-  #   end
-  #
-  #   it 'allows exercises to be deleted' do
-  #     visit page_path
-  #
-  #     exercise_row = find('.exercise-row', match: :first)
-  #     within(exercise_row) do
-  #       click_on 'Delete Exercise'
-  #     end
-  #
-  #     expect(page).to have_content('Exercise deleted!')
-  #     expect{ pull_up.reload }.to raise_error(ActiveRecord::RecordNotFound)
-  #   end
-  # end
+  context 'index' do
+    let(:page_path) { workout_entries_path }
+    let!(:entry_1) { create :workout_entry, date: Date.current - 1.day }
+    let!(:entry_2) { create :workout_entry, date: Date.current - 2.days }
+
+    it 'displays a list of links to workout entry show pages' do
+      visit page_path
+
+      expect(page).to have_link(entry_1.date.to_s, href: workout_entry_path(entry_1))
+      expect(page).to have_link(entry_2.date.to_s, href: workout_entry_path(entry_2))
+    end
+
+
+    it 'includes a link to edit existing exercises' do
+      visit page_path
+
+      rows = all('.workout-entry-row')
+      expect(rows.length).to eq(2)
+      entries = [entry_1, entry_2]
+
+      rows.each_with_index do |row, index|
+        within(row) do
+          expect(page).to have_link('Edit', href: edit_workout_entry_path(entries[index], from: 'index'))
+        end
+      end
+    end
+
+    it 'allows exercises to be deleted' do
+      visit page_path
+
+      exercise_row = find('.workout-entry-row', match: :first)
+      within(exercise_row) do
+        click_on 'Delete Entry'
+      end
+
+      expect(page).to have_content('Workout Entry deleted!')
+      expect{ entry_1.reload }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
 
   context 'create' do
     let(:page_path) { new_workout_entry_path }

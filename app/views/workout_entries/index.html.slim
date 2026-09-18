@@ -1,0 +1,11 @@
+h1 Workout Entries#index
+div.flash-container
+  - flash.each do |_type, message|
+    .flash-message
+      = message
+ul
+  - @workout_entries.each do |entry|
+    li.workout-entry-row
+      = link_to entry.date.to_s, workout_entry_path(entry)
+      = link_to 'Edit', edit_workout_entry_path(entry, from: 'index')
+      = button_to 'Delete Entry', workout_entry_path(entry),  { method: :delete }

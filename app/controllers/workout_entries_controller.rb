@@ -2,6 +2,10 @@ class WorkoutEntriesController < ApplicationController
 
   helper_method :workouts
 
+  def index
+    @workout_entries = WorkoutEntry.all
+  end
+
   def new
     @workout_entry = WorkoutEntry.new
   end
@@ -32,6 +36,13 @@ class WorkoutEntriesController < ApplicationController
 
   def show
     @workout_entry = WorkoutEntry.find(params[:id])
+  end
+
+  def destroy
+    @workout_entry = WorkoutEntry.find(params[:id])
+    @workout_entry.destroy
+    flash[:success] = "Workout Entry deleted!"
+    redirect_to workout_entries_path, status: :see_other
   end
 
   private
