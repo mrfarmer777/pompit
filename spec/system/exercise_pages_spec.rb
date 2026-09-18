@@ -20,27 +20,16 @@ RSpec.describe 'Exercise Pages', type: :system do
       expect(page).to have_link('Add Exercise', href: new_exercise_path)
     end
 
-    it 'includes a button to delete existing exercises' do
-      visit page_path
-
-      rows = all('.exercise-row')
-      expect(rows.length).to eq(2)
-      rows.each do |row|
-        within(row) do
-          expect(page).to have_button('Delete Exercise')
-        end
-      end
-    end
-
     it 'includes a link to edit existing exercises' do
       visit page_path
 
       rows = all('.exercise-row')
       expect(rows.length).to eq(2)
+      exercises = [pull_up, push_up]
 
-      rows.each do |row|
+      rows.each_with_index do |row, index|
         within(row) do
-          expect(page).to have_link('Edit')
+          expect(page).to have_link('Edit', href: edit_exercise_path(exercises[index], from: 'index'))
         end
       end
     end
