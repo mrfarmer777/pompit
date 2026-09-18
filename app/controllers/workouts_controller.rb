@@ -1,11 +1,12 @@
 class WorkoutsController < ApplicationController
+
+  helper_method :exercises
   def index
     @workouts = Workout.all
   end
 
   def new
     @workout = Workout.new
-    @exercises = Exercise.all
   end
 
   def create
@@ -14,7 +15,6 @@ class WorkoutsController < ApplicationController
       flash[:success] = 'Workout successfully created!'
       redirect_to workouts_path, status: :see_other
     else
-      @exercises = Exercise.all
       render :new, status: :unprocessable_entity
     end
   end
@@ -22,7 +22,6 @@ class WorkoutsController < ApplicationController
   def edit
     @workout = Workout.find(params[:id])
     @from = params[:from]
-    @exercises = Exercise.all
   end
 
   def update
@@ -33,7 +32,6 @@ class WorkoutsController < ApplicationController
         redirect_to(workout_path(@workout), status: :see_other) :
         redirect_to(workouts_path, status: :see_other)
     else
-      @exercises = Exercise.all
       render :edit, status: :unprocessable_entity
     end
   end
@@ -51,6 +49,11 @@ class WorkoutsController < ApplicationController
   end
 
   private
+
+
+  def exercises
+    @exercises ||= Exercise.all
+  end
 
   def workout_params
     params.require(:workout).permit(:name, workout_exercises_attributes: [:id, :exercise_id, :set_count, :_destroy])
