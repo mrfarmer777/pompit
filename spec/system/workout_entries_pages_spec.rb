@@ -3,15 +3,16 @@ require 'rails_helper'
 RSpec.describe 'Workout Entries Pages', type: :system do
 
   context 'index' do
-    let(:page_path) { workout_entries_path }
-    let!(:entry_1) { create :workout_entry, date: Date.current - 1.day }
-    let!(:entry_2) { create :workout_entry, date: Date.current - 2.days }
+    let(:page_path) { workout_entries_path(workout) }
+    let(:workout) { create :workout }
+    let!(:entry_1) { create :workout_entry, workout:, date: Date.current - 1.day }
+    let!(:entry_2) { create :workout_entry, workout:, date: Date.current - 2.days }
 
     it 'displays a list of links to workout entry show pages' do
       visit page_path
 
-      expect(page).to have_link(entry_1.date.to_s, href: workout_entry_path(entry_1))
-      expect(page).to have_link(entry_2.date.to_s, href: workout_entry_path(entry_2))
+      expect(page).to have_link(entry_1.date.to_s, href: workout_entry_path(workout_id: workout.id, id: entry_1.id))
+      expect(page).to have_link(entry_2.date.to_s, href: workout_entry_path(workout_id: workout.id, id: entry_2.id))
     end
 
 
@@ -24,7 +25,7 @@ RSpec.describe 'Workout Entries Pages', type: :system do
 
       rows.each_with_index do |row, index|
         within(row) do
-          expect(page).to have_link('Edit', href: edit_workout_entry_path(entries[index], from: 'index'))
+          expect(page).to have_link('Edit', href: edit_workout_entry_path(workout, entries[index], from: 'index'))
         end
       end
     end
@@ -42,8 +43,8 @@ RSpec.describe 'Workout Entries Pages', type: :system do
     end
   end
 
-  context 'create' do
-    let(:page_path) { new_workout_entry_path }
+  context 'create'   do
+    let(:page_path) { new_workout_entry_path(workout) }
     let!(:workout) { create(:workout, name: 'Push Workout 1') }
 
     it 'allows the user to create a new workout entry' do
@@ -51,7 +52,6 @@ RSpec.describe 'Workout Entries Pages', type: :system do
 
       fill_in 'Date', with: Date.current
 
-      select 'Push Workout 1', from: 'workout_entry[workout_id]'
       click_on 'Save Entry'
 
       expect(WorkoutEntry.count).to eq(1)
@@ -62,7 +62,6 @@ RSpec.describe 'Workout Entries Pages', type: :system do
     it 'displays validation errors for a missing date' do
       visit page_path
 
-      select 'Push Workout 1', from: 'workout_entry[workout_id]'
       click_on 'Save Entry'
 
       expect(page).to have_content("can't be blank") # missing date
@@ -70,8 +69,9 @@ RSpec.describe 'Workout Entries Pages', type: :system do
   end
 
   context 'edit' do
-    let(:workout_entry) { create :workout_entry }
-    let(:page_path) { edit_workout_entry_path(workout_entry, from: :show) }
+    let(:workout) { create :workout }
+    let(:workout_entry) { create :workout_entry, workout: }
+    let(:page_path) { edit_workout_entry_path(workout_entry.workout, workout_entry, from: :show) }
 
     it 'allows the user to update a workout entry' do
       visit page_path
@@ -80,7 +80,7 @@ RSpec.describe 'Workout Entries Pages', type: :system do
       click_button 'Update Entry'
 
       expect(page).to have_content('Workout Entry successfully updated!')
-      expect(current_path).to eq(workout_entry_path(workout_entry)), 'Should redirect to show page after update'
+      expect(current_path).to eq(workout_entry_path(workout, workout_entry)), 'Should redirect to show page after update'
       expect(WorkoutEntry.last.date).to eq(Date.current - 3.days)
     end
 
@@ -95,8 +95,9 @@ RSpec.describe 'Workout Entries Pages', type: :system do
   end
 
   context 'show' do
-    let(:workout_entry) { create(:workout_entry) }
-    let(:page_path) { workout_entry_path(workout_entry) }
+    let(:workout) { create :workout }
+    let(:workout_entry) { create(:workout_entry, workout:) }
+    let(:page_path) { workout_entry_path(workout, workout_entry) }
 
     it 'displays the workout entry details' do
       visit page_path

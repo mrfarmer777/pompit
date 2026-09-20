@@ -6,6 +6,6 @@ div.flash-container
 ul
   - @workout_entries.each do |entry|
     li.workout-entry-row
-      = link_to entry.date.to_s, workout_entry_path(entry)
-      = link_to 'Edit', edit_workout_entry_path(entry, from: 'index')
-      = button_to 'Delete Entry', workout_entry_path(entry),  { method: :delete }
+      = link_to entry.date.to_s, workout_entry_path(workout, entry)
+      = link_to 'Edit', edit_workout_entry_path(workout, entry, from: 'index')
+      = button_to 'Delete Entry', workout_entry_path(workout, entry),  { method: :delete }

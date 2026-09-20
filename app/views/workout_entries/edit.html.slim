@@ -1,5 +1,5 @@
 h1 Edit Workout Entry
-= simple_form_for @workout_entry do |f|
+= simple_form_for workout_entry, url: workout_entry_path(workout, workout_entry) do |f|
+  .workout-name workout.name
   = f.input :date, as: :date, html5: true
-  = f.collection_select :workout_id, workouts, :id, :name, { prompt: 'Choose a workout', label: 'Workout' }
   = f.button :submit, 'Update Entry'

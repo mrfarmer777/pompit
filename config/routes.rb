@@ -1,7 +1,8 @@
 Rails.application.routes.draw do
   resources :exercises, only: [:index, :show, :new, :create, :destroy, :edit, :update]
-  resources :workouts, only: [:index, :show, :new, :create, :destroy, :edit, :update]
-  resources :workout_entries, only: [:index, :show, :new, :create, :destroy, :edit, :update]
+  resources :workouts, only: [:index, :show, :new, :create, :destroy, :edit, :update] do
+    resources :entries, only: [:index, :show, :new, :create, :destroy, :edit, :update], controller: :workout_entries
+  end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
