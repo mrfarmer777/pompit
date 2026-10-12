@@ -1,5 +1,15 @@
 h1 Create new Workout Entry
 = simple_form_for workout_entry do |f|
-  .workout-name workout.name
+  .workout-name = workout.name
   = f.input :date, as: :date, html5: true
+
+  - exercise_entries.each do |exercise_entry|
+    .exercise-entry-row
+      = exercise_entry.workout_exercise.exercise.name
+      = f.simple_fields_for :exercise_entries, exercise_entry do |ee_form|
+        = ee_form.hidden_field :workout_exercise_id
+        = ee_form.input :set_number
+        = ee_form.input :reps
+        = ee_form.input :weight
+
   = f.button :submit, 'Save Entry'

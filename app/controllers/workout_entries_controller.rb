@@ -1,7 +1,7 @@
 class WorkoutEntriesController < ApplicationController
 
-  attr_reader :workout_entry
-  helper_method :workout_entry, :workout
+  attr_reader :workout_entry, :exercise_entries
+  helper_method :workout_entry, :workout, :exercise_entries
 
   def index
     @workout_entries = WorkoutEntry.where(workout_id: workout.id)
@@ -9,14 +9,16 @@ class WorkoutEntriesController < ApplicationController
 
   def new
     @workout_entry = WorkoutEntry.new
+    build_exercise_entries
   end
 
   def create
-    @workout_entry = workout.entries.build(workout_entry_params)
-    if workout_entry.save
+    @workout_entry = workout.entries.new(workout_entry_params)
+    if @workout_entry.save
       flash[:success] = "Workout entry created!"
       redirect_to workout_entry_path(workout, workout_entry), status: :see_other
     else
+      build_exercise_entries
       render :new, status: :unprocessable_entity
     end
   end
@@ -57,6 +59,29 @@ class WorkoutEntriesController < ApplicationController
   end
 
   def workout_entry_params
-    params.require(:workout_entry).permit(:date, :workout_id)
+    params.require(:workout_entry).permit(
+      :date,
+      :workout_id,
+      exercise_entries_attributes: [
+        :id,
+        :workout_exercise_id,
+        :set_number,
+        :reps,
+        :weight,
+        :_destroy
+      ]
+    )
+  end
+
+  def build_exercise_entries
+    @exercise_entries = []
+    workout.workout_exercises.each do |exercise|
+      exercise.set_count.to_i.times do |set_number|
+        @exercise_entries << @workout_entry.exercise_entries.build(
+          set_number: set_number + 1,
+          workout_exercise: exercise
+        )
+      end
+    end
   end
 end

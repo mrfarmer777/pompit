@@ -45,7 +45,7 @@ RSpec.describe 'Workout Entries Pages', type: :system do
 
   context 'create'   do
     let(:page_path) { new_workout_entry_path(workout) }
-    let!(:workout) { create(:workout, name: 'Push Workout 1') }
+    let!(:workout) { create(:workout, :with_exercises, exercise_count: 1, name: 'Push Workout 1') }
 
     it 'allows the user to create a new workout entry' do
       visit page_path
@@ -65,6 +65,29 @@ RSpec.describe 'Workout Entries Pages', type: :system do
       click_on 'Save Entry'
 
       expect(page).to have_content("can't be blank") # missing date
+    end
+
+    it 'includes exercise entry fields for each workout exercise set' do
+      visit page_path
+
+      expect(page).to have_selector('.exercise-entry-row', count: 3) # 1 exercises x 3 sets each = 3 rows
+    end
+
+    it 'allows user to create exercises entries at creation time' do
+      visit page_path
+
+      fill_in 'Date', with: Date.current
+
+      reps_input = find('[name="workout_entry[exercise_entries_attributes][1][reps]"]')
+      weight_input = find('[name="workout_entry[exercise_entries_attributes][1][weight]"]')
+
+      reps_input.set('1')
+      weight_input.set('20')
+
+      click_on 'Save Entry'
+
+      expect(WorkoutEntry.count).to eq(1)
+      expect(WorkoutEntry.last.exercise_entries.size).to eq(1)
     end
   end
 
